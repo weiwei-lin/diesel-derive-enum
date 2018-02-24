@@ -254,7 +254,7 @@ fn generate_mysql_impl(
             }
 
             impl FromSql<#diesel_mapping, Mysql> for #enum_ty {
-                fn from_sql(bytes: Option<&<Mysql as Backend>::RawValue>) -> deserialize::Result<Self> {
+                fn from_sql(bytes: Option<&Mysql::RawValue>) -> deserialize::Result<Self> {
                     match bytes {
                         #(Some(#variants_db) => Ok(#variants_rs),)*
                         Some(v) => Err(format!("Unrecognized enum variant: '{}'",
@@ -294,7 +294,7 @@ fn generate_sqlite_impl(
             }
 
             impl FromSql<#diesel_mapping, Sqlite> for #enum_ty {
-                fn from_sql(bytes: Option<&<Sqlite as Backend>::RawValue>) -> deserialize::Result<Self> {
+                fn from_sql(bytes: Option<&Sqlite::RawValue>) -> deserialize::Result<Self> {
                     match bytes {
                         #(Some(#variants_db) => Ok(#variants_rs),)*
                         Some(v) => Err(format!("Unrecognized enum variant: '{}'",
