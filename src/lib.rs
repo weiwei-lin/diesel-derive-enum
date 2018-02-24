@@ -114,7 +114,7 @@ fn generate_common_impl(
         use diesel::row::Row;
         use diesel::sql_types::*;
         use diesel::serialize::{self, ToSql, IsNull, Output};
-        use diesel::deserialize::{self, FromSql};
+        use diesel::deserialize::{self, FromSql, FromSqlRow};
         use diesel::query_builder::QueryId;
         use std::io::Write;
 
@@ -224,6 +224,12 @@ fn generate_postgres_impl(
                 }
             }
 
+            impl FromSqlRow<#diesel_mapping, Pg> for #enum_ty {
+                fn build_from_row<T: Row<Pg>>(row: &mut T) -> deserialize::Result<Self> {
+                    Self::from_sql(row.take())
+                }
+            }
+
             impl Queryable<#diesel_mapping, Pg> for #enum_ty {
                 type Row = Self;
 
@@ -264,6 +270,12 @@ fn generate_mysql_impl(
                 }
             }
 
+            impl FromSqlRow<#diesel_mapping, Mysql> for #enum_ty {
+                fn build_from_row<T: Row<Mysql>>(row: &mut T) -> deserialize::Result<Self> {
+                    Self::from_sql(row.take())
+                }
+            }
+
             impl Queryable<#diesel_mapping, Mysql> for #enum_ty {
                 type Row = Self;
 
@@ -301,6 +313,12 @@ fn generate_sqlite_impl(
                                                String::from_utf8_lossy(v)).into()),
                         None => Err("Unexpected null for non-null column".into()),
                     }
+                }
+            }
+
+            impl FromSqlRow<#diesel_mapping, Sqlite> for #enum_ty {
+                fn build_from_row<T: Row<Sqlite>>(row: &mut T) -> deserialize::Result<Self> {
+                    Self::from_sql(row.take())
                 }
             }
 
